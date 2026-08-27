@@ -2,3 +2,5 @@
 
 Files created during cryptography courses from Udemy.com (With a Little Help from My Friends: Gemini, Perplexity, ChatGPT and
 Grok 😏)
+
+1. [Cryptography: AES, RSA, ECC, SHA and RoT Secure Boot](https://www.udemy.com/course/cryptography-aes-rsa-ecc-sha-and-rot-secure-boot)
