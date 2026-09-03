@@ -1,0 +1,34 @@
+import hashlib
+import os
+
+import base58  # type: ignore[import-not-found]
+import ecdsa  # type: ignore[import-not-found]
+
+# 1. Generate a secure random 32-byte (256-bit) private key
+private_key_bytes = os.urandom(32)
+private_key_hex = private_key_bytes.hex()
+
+# 2. Derive the public key using the secp256k1 elliptic curve
+sk = ecdsa.SigningKey.from_string(private_key_bytes, curve=ecdsa.SECP256k1)
+vk = sk.get_verifying_key()
+# 0x04 indicates an uncompressed public key format
+public_key_bytes = b"\x04" + vk.to_string()
+
+# 3. Perform SHA-256 followed by RIPEMD-160 hashing (Hash160)
+sha256_bp = hashlib.sha256(public_key_bytes).digest()
+ripemd160 = hashlib.new("ripemd160")
+ripemd160.update(sha256_bp)
+hash160 = ripemd160.digest()
+
+# 4. Add the network byte (0x00 for Bitcoin mainnet)
+network_byte_payload = b"\x00" + hash160
+
+# 5. Calculate the checksum (double SHA-256, take the first 4 bytes)
+checksum = hashlib.sha256(hashlib.sha256(network_byte_payload).digest()).digest()[:4]
+
+# 6. Combine payload and checksum, then encode using Base58Check
+binary_address = network_byte_payload + checksum
+bitcoin_address = base58.b58encode(binary_address).decode("utf-8")
+
+print(f"Private Key (Hex): {private_key_hex}")
+print(f"Bitcoin Address: {bitcoin_address}")
