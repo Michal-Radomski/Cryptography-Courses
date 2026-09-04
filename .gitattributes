@@ -1,0 +1,2 @@
+*.sml linguist-detectable=false
+*.sig linguist-detectable=false
